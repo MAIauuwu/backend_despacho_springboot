@@ -31,12 +31,12 @@ jobs:
       - name: Deploy en EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST_DESPACHOS }}
+          host: ${{ secrets.EC2_PRIVATE_APP }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY_DESPACHOS }} 
-          proxy_host: ${{ secrets.FRONTEND_HOST }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          proxy_host: ${{ secrets.EC2_PUBLIC }}
           proxy_username: ${{ secrets.EC2_USER }}
-          proxy_key: ${{ secrets.FRONTEND_SSH_KEY }}
+          proxy_key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/despachos-backend
             echo "DB_ROOT_PASSWORD=Pass1234$" > .env
