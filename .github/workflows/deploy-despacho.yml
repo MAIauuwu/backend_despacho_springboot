@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-push:
-    name: Build & Push
+    name: Build, Push & Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +27,18 @@ jobs:
           file: ./Springboot-API-REST-DESPACHO/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/despachos-backend:latest
+
+      - name: Deploy en EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 10.0.2.244
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          proxy_host: ${{ secrets.EC2_HOST }}
+          proxy_username: ec2-user
+          proxy_key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/despachos-backend
+            docker compose pull
+            docker compose up -d --force-recreate
+            docker image prune -f
