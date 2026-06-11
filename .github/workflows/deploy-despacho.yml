@@ -33,10 +33,10 @@ jobs:
         with:
           host: 10.0.2.244
           username: ec2-user
-          key: ${{ secrets.ec2_ssh_key }}
-          proxy_host: ${{ secrets.ec2_host }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          proxy_host: ${{ secrets.EC2_HOST }}
           proxy_username: ec2-user
-          proxy_key: ${{ secrets.ec2_ssh_key }}
+          proxy_key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/despachos-backend
             echo "DB_ROOT_PASSWORD=Pass1234$" > .env
