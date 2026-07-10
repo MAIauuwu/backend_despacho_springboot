@@ -9,9 +9,6 @@ on:
       - deploy
 
 jobs:
-  # ================================
-  # ETAPA 1: BUILD + TEST
-  # ================================
   build-test:
     name: Build & Test
     runs-on: ubuntu-latest
@@ -39,9 +36,6 @@ jobs:
           path: Springboot-API-REST-DESPACHO/target/surefire-reports/
           retention-days: 3
 
-  # ================================
-  # ETAPA 2: PUSH (Docker Hub)
-  # ================================
   push:
     name: Push Imagen Docker
     needs: build-test
@@ -67,28 +61,3 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/despachos-backend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/despachos-backend:${{ github.sha }}
-
-  # ================================
-  # ETAPA 3: DEPLOY (EC2 via SSH)
-  # ================================
-  deploy:
-    name: Deploy en EC2 Despacho
-    needs: push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/deploy'
-
-    steps:
-      - name: Deploy en EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_PRIVATE_IP_DESPACHO }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          proxy_host: ${{ secrets.EC2_HOST }}
-          proxy_username: ec2-user
-          proxy_key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/despachos-backend
-            docker compose pull
-            docker compose up -d --force-recreate
-            docker image prune -f
